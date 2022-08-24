@@ -1,8 +1,35 @@
 # docker-tutorial
 
-## Containers
+## The Case for Docker
+
+- Shipping applications the traditional way is very manual, it is likely that you can have infrastructure and requirement changes which result in your apps breaking.
+- Accelerate Developer Onboarding.
+  - New hires can spin up entire environments in a matter of minutes.
+- Eliminate App Conflicts.
+  - v1 for old customers, v2 for new customers.
+  - In Docker, the above is just 2 containers.
+- Environment Consistency.
+  - Run containers in all environments, machines all the same.
+- Ship software faster.
+- Docker Image is everything you need to run your application.
+  - Apps can have a Frontend, APIs, Database.
+  - You might want to run the Frontend on Nginx, or use Amazon RDS as the Database.
+  - All of these requirements, along with the application source code, can be written into a Docker Image.
+  - You can then ship the Docker Image into a container.
 
 ## Docker Images
+
+- Docker Image defines the contents that are needed to run a container.
+  - Your code
+  - Server code
+  - Environment variables
+  - Security Settings
+- Docker Image can be run as a container anywhere.
+- Image is a read only template composed of layered filesystems used to share common files and create Docker container instances.
+
+## Containers
+
+- A container is an isolated and secured shipping container created from an image that can be run, started, stopped, moved and deleted.
 
 ## Deploying a Containerised App
 
