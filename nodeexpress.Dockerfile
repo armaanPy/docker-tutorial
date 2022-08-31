@@ -1,3 +1,5 @@
+# Git commit overwrite - 31/08/22
+
 # Give the base image (Node.js:Version18 ofAlpine)
 # Should be very explicit here and NOT use just "alpine" as versions could change over time and ruin your build
 FROM node:18-alpine
