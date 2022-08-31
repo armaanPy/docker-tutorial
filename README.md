@@ -33,6 +33,37 @@
 
 - A container is an isolated and secured shipping container created from an image that can be run, started, stopped, moved and deleted.
 
+## Docker Compose
+
+- Docker Compose defines services using a YAML configuration file.
+  - A service is basically a container at runtime.
+- Docker Compose can:
+  - Build one or more images.
+  - Start and stop services.
+  - View the status of running services.
+  - Stream the log ouput of running services.
+
+## Docker Compose Commands
+
+- docker-compose build
+  - Will take docker-compose YAML file and based on the services defined there will build our images.
+- docker-compose up
+  - Run the containers and bring them up.
+- docker-compose down
+  - Bring everything down.
+
+## Communication between multiple Containers
+
+- Lets say you have an application with a frontend UI, some API's and a backend database, and all of these services are running in separate containers.
+  - All of these containers will need to communicate with each other to work.
+    - We can do this with a Bridge Network.
+
+## Bridge Network
+
+- A Bridge Network is a way to create a bridge so that data can flow between containers.
+  - This allows containers and the services within them to actually talk to each other back and forth.
+    - As long as they have access to that bridge, they can talk.
+
 ### Dockerfiles
 
 - Dockerfiles work similar to a compiler that will compile code into a binary.
@@ -47,6 +78,15 @@
     EXPOSE | 3000 -> [Expose whichever port your webserver is going to be listening on]
     ENTRYPOINT | ["node", "server.js"] -> [The first command we are gonna run to start the Dockerfile up]
 - https://docs.docker.com/engine/reference/builder/
+
+### Volumes
+
+- Containers live and die, when a container dies, any file inside it dies.
+- Volume Usage Scenarios:
+  - Store log files outside of container.
+  - Store database files outside of containers.
+  - Cache files.
+  - Etc...
 
 ### Cloud-native Microservices
 
@@ -99,6 +139,92 @@
 - How to push your image up to your registry (Internal, Docker Hub, Amazon ECR etc)
 
   - docker push <username>/<image_name>:<tag>
+    - i.e. docker push armaanpy/nodeexpressapp:1.0
 
 - How to pull your image from registry to another machine
-  - docker push <username>/<image_name>:<tag>
+  - docker pull <username>/<image_name>:<tag>
+    - i.e. docker pull armaanpy/nodeexpressapp:1.0
+
+### Deleting an Image
+
+- docker images
+- docker rmi [image_id] <- Can just include the first 3 characters of the image id
+
+### Running a Container
+
+- docker run -p <externalPort>:<internalPort> --name <Name> -d <imageName>
+  - i.e. docker run -p 8081:80 --name nginx -d nginx:alpine
+
+### Stopping a Container
+
+- docker ps -a <- To find all containers
+- docker ps <- To find all running container
+- docker stop [container_id] <- Can just include the first 3 characters of the container id
+
+### Deleting a Container
+
+- docker rm -f [container_id] <- Can just include the first 3 characters of the container id
+
+### View Container Logs
+
+- docker logs <containerId>
+- docker-compose logs <- View the logs for all Docker Compose services
+- docker-compose logs <- View the logs for specific Docker Compose services
+- docker-compose logs --tail=5 <- View last 5 lines
+- docker-compose logs --follow <- Follow the log output
+
+### Creating a Container Volume
+
+- docker run -p <externalPort>:<internalPort> -v </[volume]/> <imageToRun>
+  - The above is asking for the data in volume -v to be stored on the Docker host
+- If you want to control the folder location where it writes to:
+  - docker run -p <externalPort>:<internalPort> -v $(pwd):/var/www/logs <ImageToRun>
+
+### Create a Bridge Network
+
+- To create network:
+
+  - docker network create --driver bridge [network_name]
+
+- To list the networks:
+
+  - docker network ls
+
+- To remove a network:
+
+  - docker network rm [network]
+
+- To run a DB container in a network:
+
+  - docker run -d --net=nodeexpress_network --name=mongodb mongo
+
+- To run an app container in a network:
+
+  - docker run -d -p 3000:3000 --net=nodeexpress_network --name=nodeapp armaanpy/nodeexpressapp
+
+- To check if the containers are successfully in the network:
+  - docker network ls <- To get the network ID's
+  - docker network inspect [network_id]
+    - Scroll down to the "Containers: {..}" section
+
+### Shell into a Container
+
+- docker exec -it <containerId> sh
+- docker-compose exec <serviceName> <shell> <- Allocates tty itself
+
+### Pushing images with Docker Compose
+
+- docker-compose push <- Push all the images up
+- docker-compose push [service...] <- Push whatever image is specified within said service
+
+### Scaling Containers
+
+- Normally, a single contai ner is created per service you specify.
+  - docker-compose up -d --scale <service>=4 <- Scale 4 containers for service
+- If you do this, do NOT define a host port for your service, as you cannot have multiple containers on the same port.
+  - INSTEAD go from this:
+    ports:
+    - "3000:3000"
+  - To this:
+    ports:
+    - "3000"
