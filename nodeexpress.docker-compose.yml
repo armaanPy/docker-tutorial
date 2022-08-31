@@ -1,0 +1,55 @@
+# Git commit overwrite - 31/08/22
+
+# Specify which version of Docker Compose
+# https://docs.docker.com/compose/compose-file/compose-versioning/
+version: '3.8'
+
+# Specify which services (containers at runtime) you want to compose
+services:
+
+  node:
+    container_name: nodeapp
+    # Name of the image we are going to build, as we have a build property with a context and Dockerfile
+    image: nodeapp
+    build:
+      # Define path to dir containing Dockerfile (or URL to Git repo)
+      context: .
+      # Not required if dockerfile is just named Dockerfile
+      dockerfile: nodeexpress.Dockerfile
+      # Optional environment variable that is called upon in the Dockerfile
+      args:
+        buildVersion: 1
+        # So we can "RUN apk update $PACKAGES" in the Docker file as it's useful to have these commands in the container.
+        PACKAGES: "nano wget curl"
+    # Define a Host:Container port
+    ports:
+      - "3000:3000"
+      #- "8080:4000" <- Can list as many ports as you want
+      # Put service in nodeexpress bridge network
+    networks:
+      - nodeexpress_network
+    # Store container directory (/var/www/logs) on the host machine (./logs )
+    volumes:
+      - ./logs:/var/www/logs
+    # Def env variables that will be available in the running container
+    environment:
+      - NODE_ENV=production
+      - APP_VERSION=1.0
+      # Pull in env variables from below files and make them available to the container
+      #env_file:
+      #- ./common.env
+      #- ./settings.env
+      # This service depends on mongodb service, so it will start mongodb first. It wont wait until mongodb is up, as it won't know, it will just start mongodb container first. So if you want to do that you can add a sleep OR shell script to look for when it starts up.
+    depends_on:
+      - mongodb
+
+  mongodb:
+    container_name: mongodb
+    image: mongo
+    # Put service in nodeexpress bridge network
+    networks:
+      - nodeexpress_network
+# Define a bridge network
+networks:
+  nodeexpress_network:
+    driver: bridge
