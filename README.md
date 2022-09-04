@@ -104,6 +104,27 @@
 - Docker has a mode called Swarm mode that lets you cluster multiple Docker host into a secure, highly available cluster.
 - The cluster comprises of managers and workers, we call the cluster a Swarm.
 
+### Provision Containerized Agents
+
+- Enable "Expose daemon on tcp://localhost:2375 without TLS" on Docker Desktop
+- Jenkins - Manage Agents
+  - Configure Clouds
+    - Docker
+      - Docker Host URL: tcp://host.docker.internal:2375
+        - Check "Enabled"
+        - Check "Expose DOCKER_HOST"
+  - Docker Agent templates
+    - Labels: Agent
+    - Check "Enabled"
+    - Name: Jenkins Agent
+    - Docker Image: jenkins/jenkins:lts
+    - Instance Capacity: 10
+    - Remote File System Root: /var/jenkins_home
+  - To test...
+    - Job - Configure
+    - General
+      - Restrict where this project can be run: Agent
+
 ## Implementation
 
 ### Summary of how to deploy a Containerised App
