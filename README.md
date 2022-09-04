@@ -1,5 +1,17 @@
 # docker-tutorial
 
+## Projects in this Repo
+
+#### codewithdandockerservices: Demonstrates how mulitple services can be integrated and orchestrated using Docker and Docker Compose.
+
+#### gsd: Node.js app and Python Flask app with Redis cache.
+
+#### nginx: Includes custom index.html app to use in conjunction when pulling nginx.
+
+#### nodeexpressmongodbdockerapp: Node.js and MongoDB app.
+
+#### python-docker: Python Flask, Nginx, MySQL app.
+
 ## Documentation
 
 ### The Case for Docker
