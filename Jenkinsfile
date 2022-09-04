@@ -1,7 +1,4 @@
 def dockerImage;
-options {
-    skipDefaultCheckout(true) 
-}
     
 node('docker') {
     stage('Checkout SCM') {
