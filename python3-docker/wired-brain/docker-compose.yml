@@ -1,0 +1,46 @@
+version: '3.8'
+
+# Create a secrets section with a name (db_password) and specify the file to make a secret
+secrets:
+  db_password:
+    file: db_password.txt
+  # Access the secret in the container at: /run/secrets/db_password
+
+# Defining two new networks.
+networks:
+  frontend:
+  backend:
+
+services:
+
+  productservice:
+    build:
+      # Specify the folder where the Dockerfile is held
+      context: product-services
+      # Don't need ports for product service anymore as nginx will be acting as a reverse proxy  
+      # ports:
+      #   - "5000:5000"
+      # Add a secrets section to your service and reference the secret, by name.
+      secrets:
+        - db_password
+      networks:
+        - frontend 
+        - backend
+
+  web:
+    build:
+      context: nginx
+    ports:
+    - "80:80"
+    networks:
+      - frontend
+
+  db:
+    image: mysql
+    command: "--init-file /data/application/init.sql --default-authentication-plugin=mysql_native_password"
+    volumes:
+      - "./db/init.sql:/data/application/init.sql"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+    networks:
+      - backend
